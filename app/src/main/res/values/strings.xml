@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FirstProject</string>
+    <string name="app_name">Calculator</string>
     <string name="math_puzzle_game">Math Puzzle Game</string>
     <string name="start">Start</string>
     <string name="email">email</string>
@@ -14,7 +14,7 @@
     <string name="seven">7</string>
     <string name="eight">8</string>
     <string name="nine">9</string>
-    <string name="mul">x</string>
+    <string name="mul">*</string>
     <string name="four">4</string>
     <string name="five">5</string>
     <string name="six">6</string>
@@ -26,4 +26,5 @@
     <string name="dot">.</string>
     <string name="equals">=</string>
     <string name="backspace">bc</string>
+    <string name="pi">pi</string>
 </resources>

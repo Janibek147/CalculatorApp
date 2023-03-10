@@ -4,12 +4,14 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var input: TextView
     private lateinit var output: TextView
+
     private lateinit var btnZero: Button
     private lateinit var btnOne: Button
     private lateinit var btnTwo: Button
@@ -29,6 +31,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnClear: Button
     private lateinit var btnBackspace: Button
     private lateinit var btnEquals: Button
+    private lateinit var btnPi: Button
+    private lateinit var btnDot: Button
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,53 +86,66 @@ class MainActivity : AppCompatActivity() {
             output.text = ""
         }
 
+        btnPi.setOnClickListener {
+            addToInputText("3.14")
+        }
+
         btnBackspace.setOnClickListener {
             val removeLast = input.text.dropLast(1)
             input.text = removeLast
+            output.text = ""
         }
 
         btnPlus.setOnClickListener {
-            addToInputText("+")
+            if (!getLastSymbol(input)) addToInputText("+")
         }
 
         btnMinus.setOnClickListener {
-            addToInputText("-")
+            if (!getLastSymbol(input)) addToInputText("-")
         }
 
         btnDivide.setOnClickListener {
-            addToInputText("/")
+            if (!getLastSymbol(input)) addToInputText("/")
         }
 
         btnMul.setOnClickListener {
-            addToInputText("*")
+            if (!getLastSymbol(input)) addToInputText("*")
+        }
+
+        btnDot.setOnClickListener {
+            var hasDot = false
+            input.text.forEach {
+                if (it == '.') hasDot = true
+            }
+            if (!hasDot) addToInputText(".")
         }
 
         btnEquals.setOnClickListener {
-            // 12 + 15 * 5
-            var operation = ""
-            // +++--
-            input.text.forEach {
-                if (!it.isDigit()) operation += it
-            }
-            val text = input.text.toString()
-            val numbers = text.split("+", "-", "*", "/").toMutableList()
-
-            var result = 0L
-
-            for(i in operation.indices){
-                if(i == 0) {
-                    result = calculate(numbers[i].toInt(), numbers[1].toInt(), operation[i])
-                } else {
-                    result = calculateResult(result.toInt(), numbers[i + 1].toInt(), operation[i])
+            if (!getLastSymbol(input)) {
+                var operation = ""
+                // +++--
+                input.text.forEach {
+                    if (!it.isDigit()) operation += it
                 }
-            }
+                val text = input.text.toString()
+                val numbers = text.split("+", "-", "*", "/").toMutableList()
 
-            output.text = result.toString()
+                var result = 0L
+                for (i in operation.indices) {
+                    if (i == 0) {
+                        result = calculate(numbers[i].toInt(), numbers[1].toInt(), operation[i])
+                    } else {
+                        result = calculateResult(result.toInt(), numbers[i + 1].toInt(), operation[i])
+                    }
+                }
+
+                output.text = result.toString()
+            }else if (getLastSymbol(input)) Toast.makeText(this, "Error with last symbol", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun calculate(number1: Int, number2: Int, operation: Char): Long {
-        when(operation){
+        when (operation) {
             '+' -> {
                 return (number1.toDouble() + number2).toLong()
             }
@@ -146,7 +163,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun calculateResult(result: Int, nextNumber: Int, operation: Char): Long {
-        when(operation){
+        when (operation) {
             '+' -> {
                 return (result.toDouble() + nextNumber).toLong()
             }
@@ -185,10 +202,17 @@ class MainActivity : AppCompatActivity() {
         btnClear = findViewById(R.id.btn_ac)
         btnBackspace = findViewById(R.id.btn_backsapce)
         btnEquals = findViewById(R.id.btn_equals)
+        btnPi = findViewById(R.id.btn_pi)
+        btnDot = findViewById(R.id.btn_dot)
     }
 
     @SuppressLint("SetTextI18n")
     private fun addToInputText(value: String) {
         input.text = input.text.toString() + value
     }
+
+    private fun getLastSymbol(textView: TextView): Boolean {
+        return !textView.text.last().isDigit()
+    }
+
 }
